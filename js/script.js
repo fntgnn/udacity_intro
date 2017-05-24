@@ -12,7 +12,10 @@ function loadData() {
     $nytElem.text("");
 
     // load streetview
-    var address = $('#street').val() + ',' +  $('#city').val();
+    var city = $('#city').val();
+    var street = $('#street').val();
+    var address = street + ',' + city ;
+
     $body.append('<img class="bgimg" src="http://maps.googleapis.com/maps/api/streetview?size=600x300&location='+address+'">');
 
     // YOUR CODE GOES HERE!
@@ -22,8 +25,22 @@ function loadData() {
       for(var i=0; i<docs.length; i++){
         $nytElem.append('<li class="article">'+docs[i].headline.main+'</li>');
       }
-      console.log(result.response.docs);
-    })
+      //console.log(result.response.docs);
+    });
+
+    /*$.getJSON("https://en.wikipedia.org/w/api.php?action=query&titles=Main%20Page&prop=revisions&rvprop=content&format=json", function(result){
+      console.log(result);
+    })*/
+    $.ajax({
+      url: "https://en.wikipedia.org/w/api.php?action=opensearch&search="+city+"&format=json&callback=wikiCallback",
+      dataType: 'jsonp',
+      success: function(result){
+        console.log(result);
+        for(var i=0; i<result[1].length; i++){
+          $wikiElem.append("<li class='article'><a href='"+result[3][i]+"'>"+result[1][i]+"</a></li>");
+        }
+      }
+    });
 
     return false;
 };
